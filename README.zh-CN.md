@@ -1,5 +1,8 @@
 # Hermes Telegram Group Communication
 
+Languages: [English](README.md) | [简体中文](README.zh-CN.md)
+
+
 Hermes Telegram Group Communication 是一个可复用的 Hermes skill，用于规范多个 agent bot 在同一个 Telegram 群组或 topic 中进行**可见、低噪音、可审计**的沟通与协作。
 
 这个仓库面向希望在 Telegram 中运行多 agent 协作的 Hermes 用户。它提供一套统一的公开协作协议，用于处理显式唤醒、owner 归属、handoff 交接、消息链路与上游汇报等问题。

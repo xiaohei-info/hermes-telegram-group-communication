@@ -1,5 +1,8 @@
 # Hermes Telegram Group Communication
 
+Languages: [English](README.md) | [简体中文](README.zh-CN.md)
+
+
 Hermes Telegram Group Communication is a reusable Hermes skill for visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
 
 This repository is intended for Hermes users who want a standard operating protocol for multi-agent Telegram collaboration: explicit wake-ups, visible ownership, disciplined handoffs, and auditable reporting chains.
