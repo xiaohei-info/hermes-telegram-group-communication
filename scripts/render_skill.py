@@ -116,7 +116,7 @@ def main():
     args = ap.parse_args()
 
     config = json.loads(pathlib.Path(args.config).read_text())
-    skill_name = config.get('skill_name', 'telegram-group-agent-cluster-communicate-protocol')
+    skill_name = config.get('skill_name', 'hermes-telegram-group-communication')
     output_root = pathlib.Path(args.output).expanduser().resolve()
 
     if output_root.name == skill_name:

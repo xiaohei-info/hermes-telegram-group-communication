@@ -1,5 +1,5 @@
 {
-  "skill_name": "telegram-group-agent-cluster-communicate-protocol",
+  "skill_name": "hermes-telegram-group-communication",
   "skill_category": "autonomous-ai-agents",
   "workspace_label": "your-agent-cluster",
   "profiles_dir": "~/.hermes/profiles",

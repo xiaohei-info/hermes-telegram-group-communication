@@ -1,6 +1,6 @@
-# Telegram Group Agent Cluster Communicate Protocol
+# Hermes Telegram Group Communication
 
-A reusable Hermes skill for running visible, low-noise coordination between multiple agent bots in a shared Telegram group or topic.
+A reusable Hermes skill for running visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
 
 This project packages a real-world Telegram multi-agent coordination protocol into an open-source, deployment-adaptable format. The protocol itself is reusable; local bot rosters, role mappings, and deployment details are rendered from your own config.
 
@@ -75,8 +75,8 @@ Everything else ships as sanitized static content.
 ### 1) Clone the repo
 
 ```bash
-git clone https://github.com/xiaohei-info/telegram-group-agent-cluster-communicate-protocol.git
-cd telegram-group-agent-cluster-communicate-protocol
+git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git
+cd hermes-telegram-group-communication
 ```
 
 ### 2) Create your local config
@@ -109,22 +109,22 @@ python3 scripts/render_skill.py \
 This creates:
 
 ```text
-dist/telegram-group-agent-cluster-communicate-protocol/
+dist/hermes-telegram-group-communication/
 ```
 
 ### 4) Install into Hermes
 
 ```bash
 mkdir -p ~/.hermes/skills/autonomous-ai-agents
-rm -rf ~/.hermes/skills/autonomous-ai-agents/telegram-group-agent-cluster-communicate-protocol
-cp -R dist/telegram-group-agent-cluster-communicate-protocol \
+rm -rf ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+cp -R dist/hermes-telegram-group-communication \
   ~/.hermes/skills/autonomous-ai-agents/
 ```
 
 Start a **new Hermes session**, then load the skill:
 
 ```text
-skill_view(name='telegram-group-agent-cluster-communicate-protocol')
+skill_view(name='hermes-telegram-group-communication')
 ```
 
 ## Optional: render directly into your local Hermes skills tree
@@ -168,7 +168,7 @@ python3 scripts/audit_sensitive_strings.py \
 
 ```bash
 python3 scripts/audit_sensitive_strings.py \
-  --path dist/telegram-group-agent-cluster-communicate-protocol \
+  --path dist/hermes-telegram-group-communication \
   --deny your_real_company_name \
   --deny your_real_bot_prefix \
   --deny /home/your-user

@@ -1,5 +1,5 @@
 ---
-name: telegram-group-agent-cluster-communicate-protocol
+name: hermes-telegram-group-communication
 description: Use when multiple Hermes/OpenClaw/other agent bots need to talk, hand off work, coordinate ownership, or report through a shared Telegram group or topic without causing noisy misfires.
 version: 1.5.0
 author: Hermes Agent
@@ -10,7 +10,7 @@ metadata:
     related_skills: [hermes-agent, subagent-collaboration-workflow, writing-skills]
 ---
 
-# Telegram Group Agent Cluster Communication Protocol
+# Hermes Telegram Group Communication
 
 ## Overview
 
@@ -240,7 +240,7 @@ Your first ping should normally include five things:
 
 ### Skill-loading reminder rule
 
-When you are asking another agent to coordinate in a Telegram group/topic, **proactively tell that agent to load `telegram-group-agent-cluster-communicate-protocol` before replying**.
+When you are asking another agent to coordinate in a Telegram group/topic, **proactively tell that agent to load `hermes-telegram-group-communication` before replying**.
 
 Do not assume the other agent will remember:
 - to `@mention` the next owner
@@ -254,7 +254,7 @@ Recommended shape:
 
 ```text
 @target_bot 我是 <self_bot> / <profile_name>。
-请先加载 `telegram-group-agent-cluster-communicate-protocol` skill，再继续处理这条协作消息。
+请先加载 `hermes-telegram-group-communication` skill，再继续处理这条协作消息。
 我需要你帮我 <one concrete ask>。
 请优先使用 Telegram 原生引用回复（quote-reply）直接回复本条消息；如果当前环境无法执行原生引用回复，再在同一 topic 新发一条，并以 @<self_bot> [reply-fallback] 开头。
 先回一句“收到”，然后给出 <expected next artifact>。
@@ -633,7 +633,7 @@ Operational rule:
 
 ```text
 @target_bot 我是 @self_bot。
-请先加载 `telegram-group-agent-cluster-communicate-protocol` skill，再继续处理这条协作消息。
+请先加载 `hermes-telegram-group-communication` skill，再继续处理这条协作消息。
 我需要你帮我 <one concrete ask>。
 请优先使用 Telegram 原生引用回复本条；如果当前环境无法执行原生引用回复，再在同一 topic 中以 @self_bot [reply-fallback] 开头。
 先回“收到”，再给出 <expected next artifact>。
@@ -707,7 +707,7 @@ owner: @self_bot
    这是最常见的协议滑落。正确顺序是：先原生引用回复；如果做不到，再 `reply-fallback`，再 `[ACK]`，再给 substantive content。
 
 11. **默认以为对方会自己记得加载这个 skill。**
-   不要假设别的 agent 会自动想起这套 protocol。发起协作时应主动写明：先加载 `telegram-group-agent-cluster-communicate-protocol` skill，再回复。
+   不要假设别的 agent 会自动想起这套 protocol。发起协作时应主动写明：先加载 `hermes-telegram-group-communication` skill，再回复。
 
 12. **最终可见总结丢失 caller anchor。**
    即使 agent 知道 caller 是谁、甚至内部已经生成过 `[ACK]`，如果最终公开发出的只有 plain-text summary 且没有 `@caller_bot [reply-fallback]`，协议仍然失败。
@@ -720,7 +720,7 @@ Before sending a coordination message in a Telegram group/topic, check:
 - [ ] 如果没有，我是否先停下来修正协议形态，而不是直接发送分析内容？
 - [ ] 我是在继续同一任务吗？如果是，优先使用原生引用回复保持消息级链路。
 - [ ] 我真的需要目标 agent 行动吗？如果需要，显式 `@mention` 它。
-- [ ] 如果这次协作需要遵守本 protocol，我有没有明确告诉对方先加载 `telegram-group-agent-cluster-communicate-protocol` skill？
+- [ ] 如果这次协作需要遵守本 protocol，我有没有明确告诉对方先加载 `hermes-telegram-group-communication` skill？
 - [ ] 我有没有无意中写出别的真实 bot handle？
 - [ ] 当前任务链是否已有明确 owner？
 - [ ] 如果我要拉其他 agent 进来，我是否先根据 profile / SOUL / routing reference 选对了人？

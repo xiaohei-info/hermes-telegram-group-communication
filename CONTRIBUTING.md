@@ -39,7 +39,7 @@ If you are changing publication or sanitization logic, also run an audit:
 
 ```bash
 python3 scripts/audit_sensitive_strings.py --path . --deny your_local_string
-python3 scripts/audit_sensitive_strings.py --path dist/telegram-group-agent-cluster-communicate-protocol --deny your_local_string
+python3 scripts/audit_sensitive_strings.py --path dist/hermes-telegram-group-communication --deny your_local_string
 ```
 
 ## Sensitive data rules
