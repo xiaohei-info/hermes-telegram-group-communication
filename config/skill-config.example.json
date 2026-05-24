@@ -1,0 +1,159 @@
+{
+  "skill_name": "telegram-group-agent-cluster-communicate-protocol",
+  "skill_category": "autonomous-ai-agents",
+  "workspace_label": "your-agent-cluster",
+  "profiles_dir": "~/.hermes/profiles",
+  "roles": [
+    {
+      "role_key": "routing-specialist",
+      "display_name": "Routing Specialist",
+      "telegram_bot_username": "your_routing_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "routing",
+        "decomposition",
+        "parallel workstream planning",
+        "upstream summarization"
+      ],
+      "not_best_for": [
+        "being the default implementer"
+      ],
+      "escalate_when": [
+        "you do not know the right split yet",
+        "there are 3+ plausible specialists",
+        "the task is naturally a graph rather than one bounded action"
+      ]
+    },
+    {
+      "role_key": "architecture-specialist",
+      "display_name": "Architecture Specialist",
+      "telegram_bot_username": "your_architecture_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "system design",
+        "interface boundaries",
+        "migrations",
+        "cross-service coordination"
+      ],
+      "not_best_for": [
+        "trivial local bugfixes",
+        "being the default implementer"
+      ],
+      "escalate_when": [
+        "the task crosses service/module boundaries",
+        "schema/contract/migration shape matters"
+      ]
+    },
+    {
+      "role_key": "backend-specialist",
+      "display_name": "Backend Specialist",
+      "telegram_bot_username": "your_backend_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "API behavior",
+        "service logic",
+        "business rules",
+        "integrations",
+        "backend tests"
+      ],
+      "not_best_for": [
+        "warehouse/ETL ownership",
+        "frontend-visible UX issues as the primary problem"
+      ],
+      "escalate_when": []
+    },
+    {
+      "role_key": "frontend-specialist",
+      "display_name": "Frontend Specialist",
+      "telegram_bot_username": "your_frontend_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "UI",
+        "interactions",
+        "browser behavior",
+        "frontend state",
+        "frontend tests"
+      ],
+      "not_best_for": [
+        "patching around backend/data semantics instead of escalating upstream"
+      ],
+      "escalate_when": [
+        "the real issue is backend contract/data semantics, not browser behavior"
+      ]
+    },
+    {
+      "role_key": "data-specialist",
+      "display_name": "Data Specialist",
+      "telegram_bot_username": "your_data_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "ETL/ELT",
+        "data pipelines",
+        "warehouse modeling",
+        "backfill",
+        "data quality"
+      ],
+      "not_best_for": [
+        "application API/service logic as the main problem"
+      ],
+      "escalate_when": []
+    },
+    {
+      "role_key": "validation-specialist",
+      "display_name": "Validation Specialist",
+      "telegram_bot_username": "your_validation_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "reproduction",
+        "user-path verification",
+        "regression checks",
+        "validation evidence collection"
+      ],
+      "not_best_for": [
+        "acting as the final product owner",
+        "replacing technical review"
+      ],
+      "escalate_when": []
+    },
+    {
+      "role_key": "review-specialist",
+      "display_name": "Review Specialist",
+      "telegram_bot_username": "your_review_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "independent technical quality review",
+        "checking pass vs blocked",
+        "evaluating implementation sufficiency"
+      ],
+      "not_best_for": [
+        "being the implementer",
+        "being the product sign-off owner"
+      ],
+      "escalate_when": []
+    },
+    {
+      "role_key": "product-owner",
+      "display_name": "Product Owner",
+      "telegram_bot_username": "your_product_owner_bot",
+      "telegram_bot_id": "",
+      "has_topics_enabled": "unknown",
+      "best_for": [
+        "clarifying scope",
+        "acceptance criteria",
+        "product framing",
+        "final product sign-off after QA evidence"
+      ],
+      "not_best_for": [
+        "acting as the technical implementer"
+      ],
+      "escalate_when": []
+    }
+  ]
+}
