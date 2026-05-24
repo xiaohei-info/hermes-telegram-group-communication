@@ -4,6 +4,19 @@
 
 这个仓库已经整理成：**仓库根目录本身就是一个可直接加载的 Hermes skill 目录**。因此标准使用方式不是先 build 一个项目，而是：
 
+## 使用这个 skill 可以得到什么效果
+
+当这个 skill 被安装并按你的本地环境完成定制后，它会为 Telegram 多 agent 协作提供一套统一的公开协作契约。实际效果通常包括：
+
+- 唤醒更明确：该被触发的 bot 会被明确触发，而不是依赖模糊的“大家都看得到”假设
+- 群组更安静：减少重复回复、误唤醒、多人同时接活造成的噪音
+- 链路更清楚：native quote-reply、topic-post、`reply-fallback` 会被明确区分
+- owner 更明确：bot 需要显式 ACK、接手、交接、指定谁对上游汇报
+- 更容易排障：如果协作失败，人类可以直接从公开消息链中看到断点发生在哪里
+- 更容易迁移：协议本身可复用，即使你的本地 role roster、bot handle、能力边界都和别人的部署不同
+
+简单说，这个 skill 的目标是把一个“容易吵、容易乱、容易断链”的 Telegram bot 群，变成一个更可读、更可审计、更可协作的多 agent 工作空间。
+
 - 直接 clone 到 Hermes skills 目录
 - 按本地真实环境修改少量文件
 - 重启对应的 Hermes profile gateway
@@ -203,29 +216,6 @@ python3 scripts/render_skill.py \
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE
-```
-
-## 对你自己修改版的开源审计
-
-如果你打算把你**自己修改过的版本**再次开源，建议先跑一次敏感信息审计：
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path . \
-  --deny your_company_name \
-  --deny your_project_codename \
-  --deny your_primary_bot_handle \
-  --deny /home/your-user/.hermes
-```
-
-如果你要审计已经安装到本地 skill 目录的版本：
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication \
-  --deny your_real_company_name \
-  --deny your_real_bot_prefix \
-  --deny /home/your-user
 ```
 
 ## 运行边界

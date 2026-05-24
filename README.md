@@ -4,6 +4,19 @@ A reusable Hermes skill for visible, low-noise communication and coordination be
 
 This repository is published in a **directly loadable Hermes skill layout**. The repository root is itself a valid skill directory, so the normal installation path is to clone it directly into your Hermes skills tree, update a small number of deployment-specific files, start a new Hermes session, and load the skill.
 
+## What you get from using this skill
+
+When this skill is installed and localized for your deployment, it gives your Telegram-based multi-agent system a shared operating contract for public coordination. In practice, that means:
+
+- clearer wake-up behavior: the right bot gets explicitly triggered instead of relying on vague ambient awareness
+- lower group noise: fewer duplicate replies, fewer accidental multi-bot collisions, and fewer off-chain handoff ambiguities
+- visible task lineage: native quote-reply, topic-post, and `reply-fallback` are treated as distinct coordination modes
+- explicit ownership: bots are expected to acknowledge, claim work, hand off cleanly, and nominate an upstream reporter
+- easier debugging: when coordination fails, humans can inspect the public thread and see where the chain broke
+- better reuse across fleets: the protocol stays stable even when your local role roster, bot handles, and routing boundaries differ
+
+In short, this skill helps turn a Telegram group from a noisy bot room into a more legible multi-agent workspace.
+
 ## What this skill is for
 
 Use this skill when:
@@ -197,31 +210,6 @@ Before relying on the skill in a real Telegram group workflow, verify:
 
 Chinese guide:
 - [README.zh-CN.md](README.zh-CN.md)
-
-## Pre-publication audit for your customized copy
-
-Before open-sourcing **your own modified deployment copy**, run the built-in audit script against the installed skill folder or your working copy.
-
-### Example: audit the working copy
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path . \
-  --deny your_company_name \
-  --deny your_project_codename \
-  --deny your_primary_bot_handle \
-  --deny /home/your-user/.hermes
-```
-
-### Example: audit an installed skill folder
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication \
-  --deny your_real_company_name \
-  --deny your_real_bot_prefix \
-  --deny /home/your-user
-```
 
 ## Runtime limits and scope
 
