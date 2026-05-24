@@ -2,9 +2,112 @@
 
 A reusable Hermes skill for running visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
 
-This project packages a real-world Telegram multi-agent coordination protocol into an open-source, deployment-adaptable format. The protocol itself is reusable; local bot rosters, role mappings, and deployment details are rendered from your own config.
+This repository is intentionally structured so that the **repository root is also a valid Hermes skill folder**.
+That means the fastest install path is:
 
-## What problem this solves
+- clone this repository directly into your Hermes skills directory
+- edit a small number of placeholder/reference files
+- start a new Hermes session
+- load the skill immediately
+
+## Quickest path (recommended)
+
+Clone directly into your Hermes skills directory:
+
+```bash
+git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+```
+
+Then edit these files:
+
+- `references/live-bot-roster.md`
+- `references/profile-capability-routing.md`
+
+Optional structured source-of-truth file:
+
+- `templates/skill-config.example.json`
+
+After editing, start a **new Hermes session**, then load:
+
+```text
+skill_view(name='hermes-telegram-group-communication')
+```
+
+## Why this repo can be cloned directly as a skill
+
+The repository root contains the standard Hermes skill layout:
+
+```text
+hermes-telegram-group-communication/
+├── SKILL.md
+├── references/
+├── templates/
+└── scripts/
+```
+
+So if you clone it into:
+
+```text
+~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+```
+
+your Hermes installation already has the correct shape to load it.
+
+## Minimal customization steps
+
+If you want the smallest possible setup effort, you can ignore most of the repo and only update:
+
+### 1. `references/live-bot-roster.md`
+Fill in your real:
+- profile/role keys
+- bot usernames
+- optional bot IDs
+- topic capability flags
+
+### 2. `references/profile-capability-routing.md`
+Adjust:
+- which role owns which kind of work
+- how escalation should happen in your deployment
+- where your local role docs live
+
+That is enough for many deployments.
+
+## Standard clone-to-skill workflow
+
+```bash
+# 1) Clone into the Hermes skills directory
+git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+
+# 2) Edit the deployment-specific files
+$EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/live-bot-roster.md
+$EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/profile-capability-routing.md
+
+# 3) Start a new Hermes session, then load the skill
+```
+
+Load command inside Hermes:
+
+```text
+skill_view(name='hermes-telegram-group-communication')
+```
+
+## Alternative: keep a local config and regenerate the reference files
+
+If you prefer maintaining role/bot info as structured JSON rather than editing markdown by hand:
+
+```bash
+cp templates/skill-config.example.json templates/skill-config.local.json
+```
+
+Then update `templates/skill-config.local.json`, and render the two high-locality reference files into a separate output directory:
+
+```bash
+python3 scripts/render_skill.py   --config templates/skill-config.local.json   --output /tmp/hermes-telegram-group-communication-rendered
+```
+
+Then copy the rendered files back into your installed skill directory if you want to use them there.
+
+## What problem this skill solves
 
 When multiple agents share a Telegram group or topic, common failure modes appear quickly:
 
@@ -23,172 +126,47 @@ This skill standardizes:
 - upstream reporter nomination
 - public coordination discipline with minimal noise
 
-## Who should use this
-
-Use this repo if you:
-
-- run multiple Hermes agents in a shared Telegram group or topic
-- want visible, auditable cross-agent coordination instead of hidden tool-only handoffs
-- need a protocol that still works when your runtime cannot reliably preserve native message-level reply anchors
-- want a reusable skill package you can adapt to your own local role fleet and bot usernames
-
-## What this repo contains
-
-- `src/static/SKILL.md` — the sanitized protocol skill
-- `src/static/references/` — reusable reference docs that do not depend on your local workspace
-- `config/skill-config.example.json` — the template variables you should fill with your own local roles / bot usernames / capability map
-- `scripts/render_skill.py` — renders the installable skill package using your config
-- `scripts/audit_sensitive_strings.py` — scans the repo or rendered output for local/sensitive strings before publication
-- `CHANGELOG.md` — release notes / packaging history
-- `CONTRIBUTING.md` — contribution guidance for protocol/doc changes
-
 ## Repository layout
 
 ```text
 .
-├── config/
+├── SKILL.md
+├── references/
+│   ├── live-bot-roster.md
+│   ├── profile-capability-routing.md
+│   └── ...
+├── templates/
 │   └── skill-config.example.json
 ├── scripts/
 │   ├── audit_sensitive_strings.py
 │   └── render_skill.py
-├── src/
-│   └── static/
-│       ├── SKILL.md
-│       └── references/
-├── CHANGELOG.md
+├── README.md
+├── README.zh-CN.md
 ├── CONTRIBUTING.md
-├── LICENSE
-└── README.md
+├── CHANGELOG.md
+└── LICENSE
 ```
 
-## What gets templated
+## Chinese documentation
 
-The highest-local sections are rendered from config:
+Chinese guide:
+- [README.zh-CN.md](README.zh-CN.md)
 
-- `references/live-bot-roster.md`
-- `references/profile-capability-routing.md`
+## Pre-publication audit for your customized copy
 
-Everything else ships as sanitized static content.
+Before open-sourcing **your own modified deployment copy**, run the built-in audit script against the installed skill folder or your working copy.
 
-## Quick start
-
-### 1) Clone the repo
+### Example: audit the working copy
 
 ```bash
-git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git
-cd hermes-telegram-group-communication
+python3 scripts/audit_sensitive_strings.py   --path .   --deny your_company_name   --deny your_project_codename   --deny your_primary_bot_handle   --deny /home/your-user/.hermes
 ```
 
-### 2) Create your local config
+### Example: audit an installed skill folder
 
 ```bash
-cp config/skill-config.example.json config/skill-config.local.json
+python3 scripts/audit_sensitive_strings.py   --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication   --deny your_real_company_name   --deny your_real_bot_prefix   --deny /home/your-user
 ```
-
-Edit these fields to match your own deployment:
-
-- `workspace_label`
-- `profiles_dir`
-- `roles[*].role_key`
-- `roles[*].display_name`
-- `roles[*].telegram_bot_username`
-- `roles[*].telegram_bot_id` *(optional — leave empty if you do not want to publish/store it)*
-- `roles[*].has_topics_enabled`
-- `roles[*].best_for`
-- `roles[*].not_best_for`
-- `roles[*].escalate_when`
-
-### 3) Render the skill
-
-```bash
-python3 scripts/render_skill.py \
-  --config config/skill-config.local.json \
-  --output dist
-```
-
-This creates:
-
-```text
-dist/hermes-telegram-group-communication/
-```
-
-### 4) Install into Hermes
-
-```bash
-mkdir -p ~/.hermes/skills/autonomous-ai-agents
-rm -rf ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
-cp -R dist/hermes-telegram-group-communication \
-  ~/.hermes/skills/autonomous-ai-agents/
-```
-
-Start a **new Hermes session**, then load the skill:
-
-```text
-skill_view(name='hermes-telegram-group-communication')
-```
-
-## Optional: render directly into your local Hermes skills tree
-
-```bash
-python3 scripts/render_skill.py \
-  --config config/skill-config.local.json \
-  --output ~/.hermes/skills/autonomous-ai-agents
-```
-
-If the output directory already contains a skill folder with the same name, delete it first or render into a clean path.
-
-## Example adaptation workflow
-
-A typical local rollout looks like this:
-
-1. map your role fleet (`routing-specialist`, `backend-specialist`, etc.)
-2. fill in local Telegram bot usernames
-3. decide whether to include bot IDs at all
-4. render the skill
-5. install it into your Hermes skills directory
-6. start a new Hermes session
-7. test one real Telegram handoff using `[PING]`, `[ACK]`, and `reply-fallback`
-
-## Pre-publication audit
-
-Before open-sourcing **your customized copy**, run the built-in audit script against both the repo and the rendered skill output.
-
-### Example: repo audit
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path . \
-  --deny your_company_name \
-  --deny your_project_codename \
-  --deny your_primary_bot_handle \
-  --deny /home/your-user/.hermes
-```
-
-### Example: rendered output audit
-
-```bash
-python3 scripts/audit_sensitive_strings.py \
-  --path dist/hermes-telegram-group-communication \
-  --deny your_real_company_name \
-  --deny your_real_bot_prefix \
-  --deny /home/your-user
-```
-
-Use your **actual local sensitive strings** in the denylist.
-
-## Suggested open-source workflow
-
-1. render from a clean config
-2. audit the repo root
-3. audit the rendered `dist/` package
-4. ask a second reviewer to search for:
-   - real bot usernames
-   - bot IDs
-   - chat IDs / thread IDs
-   - personal names / project names
-   - absolute local filesystem paths
-   - internal-only runtime notes that should be rewritten or removed
-5. only then push or make the repository public
 
 ## Runtime limits and scope
 
@@ -211,17 +189,24 @@ That is why the skill distinguishes:
 
 ## FAQ
 
-### Why is `dist/` not committed?
+### Do I need to run the render script?
 
-Because the rendered output depends on your local deployment config. The repo stores the reusable static source plus the render script, not one specific deployment snapshot.
+No.
+
+For most users, the fastest path is:
+- clone into the Hermes skill directory
+- edit `references/live-bot-roster.md`
+- edit `references/profile-capability-routing.md`
+- start a new Hermes session
+- load the skill
 
 ### Do I need bot IDs?
 
-No. Bot IDs are optional. If your deployment does not need them, leave them blank in config and do not publish them.
+No. Bot IDs are optional. If your deployment does not need them, omit them.
 
 ### Can I rename the role keys?
 
-Yes. The example config uses generic names, but you should rename them to match your own role fleet.
+Yes. The example files use generic names; change them to match your own local role fleet.
 
 ## Contributing
 

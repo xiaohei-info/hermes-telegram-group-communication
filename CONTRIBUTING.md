@@ -30,16 +30,16 @@ Please check:
 ## Local development flow
 
 ```bash
-cp config/skill-config.example.json config/skill-config.local.json
-# edit config/skill-config.local.json
-python3 scripts/render_skill.py --config config/skill-config.local.json --output dist
+cp templates/skill-config.example.json templates/skill-config.local.json
+# edit templates/skill-config.local.json
+python3 scripts/render_skill.py --config templates/skill-config.local.json --output /tmp/hermes-telegram-group-communication-rendered
 ```
 
 If you are changing publication or sanitization logic, also run an audit:
 
 ```bash
 python3 scripts/audit_sensitive_strings.py --path . --deny your_local_string
-python3 scripts/audit_sensitive_strings.py --path dist/hermes-telegram-group-communication --deny your_local_string
+python3 scripts/audit_sensitive_strings.py --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication --deny your_local_string
 ```
 
 ## Sensitive data rules
