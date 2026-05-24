@@ -1,12 +1,24 @@
 # Hermes Telegram Group Communication
 
-这是一个可复用的 Hermes skill，用来规范多个 agent bot 在同一个 Telegram 群组 / topic 中进行**可见、低噪音、可审计**的沟通与协作。
+Hermes Telegram Group Communication 是一个可复用的 Hermes skill，用于规范多个 agent bot 在同一个 Telegram 群组或 topic 中进行**可见、低噪音、可审计**的沟通与协作。
 
-这个仓库已经整理成：**仓库根目录本身就是一个可直接加载的 Hermes skill 目录**。因此标准使用方式不是先 build 一个项目，而是：
+这个仓库面向希望在 Telegram 中运行多 agent 协作的 Hermes 用户。它提供一套统一的公开协作协议，用于处理显式唤醒、owner 归属、handoff 交接、消息链路与上游汇报等问题。
+
+## 概述
+
+当多个 agent 共用一个 Telegram 群组或 topic 时，协作经常会出现这些典型问题：
+
+- 随手写了一个 handle，结果唤醒了错误的 bot
+- 真正该干活的 bot 没有被明确唤醒
+- 多个 bot 同时回答，群里很吵
+- 消息链路断裂，后续很难审计谁接手了什么任务
+- 没人知道谁是 owner，谁负责最后对上游汇报
+
+这个 skill 的目标，就是为这类场景提供一套统一协议。
 
 ## 使用这个 skill 可以得到什么效果
 
-当这个 skill 被安装并按你的本地环境完成定制后，它会为 Telegram 多 agent 协作提供一套统一的公开协作契约。实际效果通常包括：
+当这个 skill 被安装并按你的本地环境完成定制后，通常会带来这些效果：
 
 - 唤醒更明确：该被触发的 bot 会被明确触发，而不是依赖模糊的“大家都看得到”假设
 - 群组更安静：减少重复回复、误唤醒、多人同时接活造成的噪音
@@ -15,30 +27,7 @@
 - 更容易排障：如果协作失败，人类可以直接从公开消息链中看到断点发生在哪里
 - 更容易迁移：协议本身可复用，即使你的本地 role roster、bot handle、能力边界都和别人的部署不同
 
-简单说，这个 skill 的目标是把一个“容易吵、容易乱、容易断链”的 Telegram bot 群，变成一个更可读、更可审计、更可协作的多 agent 工作空间。
-
-- 直接 clone 到 Hermes skills 目录
-- 按本地真实环境修改少量文件
-- 重启对应的 Hermes profile gateway
-- 开一个新的 Hermes session
-- 直接加载 skill
-
-## 这个 skill 适合什么场景
-
-适用于：
-
-- 多个 agent bot 共享一个 Telegram 群组或 topic
-- 希望群内协作是可见、可审计的，而不是只靠内部隐藏 handoff
-- 需要明确的唤醒规则、owner 规则、handoff 规则、汇报规则
-- 需要区分 native quote-reply、topic-post 和 `reply-fallback`
-
-它主要解决这些常见问题：
-
-- 随手写了一个 handle，结果唤醒了错误的 bot
-- 真正该干活的 bot 没有被明确唤醒
-- 多个 bot 同时回答，群里很吵
-- 消息链路断裂，只剩同 topic 发新消息，但没有任务 lineage
-- 没人知道谁是 owner，谁负责最后对上游汇报
+简单说，这个 skill 的目标是把一个容易吵、容易乱、容易断链的 Telegram bot 群，变成一个更可读、更可审计、更可协作的多 agent 工作空间。
 
 ## 前置条件
 
@@ -50,9 +39,10 @@
 
 ### 2）开启 bot-to-bot communication 所需配置
 
-如果你的 Telegram / gateway / 多 agent 运行环境里，bot 之间要互相“看到并响应”对方消息需要额外开启 **bot-to-bot communication** 相关配置，那么必须为这些 bot 打开。
+如果你的 Telegram / gateway / 多 agent 运行环境里，bot 之间要互相看到并响应对方消息需要额外开启 **bot-to-bot communication** 相关配置，那么必须为这些 bot 打开。
 
 这个 skill 默认假设：
+
 - 多个 bot 可以出现在同一个共享群组 / topic 中
 - 在平台和 gateway 配置允许的情况下，bot 可以看到别的 bot 发出的协作消息并继续链路
 
@@ -63,14 +53,14 @@
 这一步非常关键，因为如果 privacy mode 没关：
 
 - bot 可能根本收不到普通群消息
-- agent 之间可能“理论上在一个群里”，实际上彼此看不到
+- agent 之间可能理论上在一个群里，实际上彼此看不到
 - Hermes gateway 也可能收不到群组里的 `@` 唤醒消息
 
 也就是说，哪怕 skill 本身完全正确，如果 Telegram 没把消息交给 Hermes，这套协作协议也跑不起来。
 
 ### 4）把 bot 加入目标 Telegram 群组 / topic
 
-确保这些 bot 真的已经加入你要协作的群组；如果你使用 Telegram topics，也要确保它们处在正确的工作空间上下文里。
+确保这些 bot 已经加入你要协作的群组；如果你使用 Telegram topics，也要确保它们处在正确的工作空间上下文里。
 
 ### 5）把 bot 配置到对应的 Hermes profile 中
 
@@ -178,6 +168,7 @@ python3 scripts/render_skill.py \
 然后把生成出来的文件复制回你安装的 skill 目录即可。
 
 注意：
+
 - 这是**可选高级路径**
 - 不是默认必需路径
 - 默认推荐还是直接手改 `references/` 下两个文件
@@ -193,8 +184,7 @@ python3 scripts/render_skill.py \
 - 修改配置后，相关 Hermes gateway 已重启
 - `references/live-bot-roster.md` 已替换为你的真实 bot/profile 信息
 - `references/profile-capability-routing.md` 已替换为你的真实角色路由信息
-- 新的 Hermes session 可以加载：
-  - `skill_view(name='hermes-telegram-group-communication')`
+- 新的 Hermes session 可以加载 `skill_view(name='hermes-telegram-group-communication')`
 - 在真实 Telegram 群里发一个 `@mention`，目标 bot 能被正确唤醒
 
 ## 仓库结构

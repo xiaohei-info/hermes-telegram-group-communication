@@ -1,48 +1,41 @@
 # Hermes Telegram Group Communication
 
-A reusable Hermes skill for visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
+Hermes Telegram Group Communication is a reusable Hermes skill for visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
 
-This repository is published in a **directly loadable Hermes skill layout**. The repository root is itself a valid skill directory, so the normal installation path is to clone it directly into your Hermes skills tree, update a small number of deployment-specific files, start a new Hermes session, and load the skill.
+This repository is intended for Hermes users who want a standard operating protocol for multi-agent Telegram collaboration: explicit wake-ups, visible ownership, disciplined handoffs, and auditable reporting chains.
 
-## What you get from using this skill
+## Overview
 
-When this skill is installed and localized for your deployment, it gives your Telegram-based multi-agent system a shared operating contract for public coordination. In practice, that means:
-
-- clearer wake-up behavior: the right bot gets explicitly triggered instead of relying on vague ambient awareness
-- lower group noise: fewer duplicate replies, fewer accidental multi-bot collisions, and fewer off-chain handoff ambiguities
-- visible task lineage: native quote-reply, topic-post, and `reply-fallback` are treated as distinct coordination modes
-- explicit ownership: bots are expected to acknowledge, claim work, hand off cleanly, and nominate an upstream reporter
-- easier debugging: when coordination fails, humans can inspect the public thread and see where the chain broke
-- better reuse across fleets: the protocol stays stable even when your local role roster, bot handles, and routing boundaries differ
-
-In short, this skill helps turn a Telegram group from a noisy bot room into a more legible multi-agent workspace.
-
-## What this skill is for
-
-Use this skill when:
-
-- multiple agent bots share one Telegram group or topic
-- you want visible, auditable coordination instead of hidden internal-only handoffs
-- you need clear wake-up rules, owner rules, handoff rules, and reporting rules
-- you want a standard way to distinguish native quote-reply, topic-post, and `reply-fallback`
-
-It is designed to reduce common multi-agent Telegram failure modes:
+When several agents share one Telegram group or topic, coordination often breaks down in predictable ways:
 
 - the wrong bot wakes up because someone casually typed a handle
-- the right bot never wakes up because nobody explicitly addressed it
+- the correct bot never wakes up because nobody explicitly addressed it
 - multiple bots answer the same task and create noise
-- a conversation forks into several top-level messages and loses task lineage
+- conversations lose message-level lineage and become hard to audit
 - nobody knows who owns the task or who should report upstream
+
+This skill provides a common protocol for those situations.
+
+## Expected outcomes
+
+After this skill is installed and localized for your deployment, it helps produce:
+
+- clearer wake-up behavior, because the target bot is explicitly addressed
+- lower group noise, because duplicate replies and ambiguous handoffs are reduced
+- visible task lineage, because native quote-reply, topic-post, and `reply-fallback` are treated as distinct coordination modes
+- explicit ownership, because bots are expected to acknowledge, claim, hand off, and nominate an upstream reporter
+- easier debugging, because humans can inspect the public thread and see where coordination failed
+- better portability across fleets, because the protocol can be reused even when local role rosters and bot handles differ
 
 ## Prerequisites
 
-Before using this skill, make sure your Telegram + Hermes environment is actually capable of group-based multi-agent coordination.
+Before using this skill, make sure your Telegram and Hermes environment is capable of group-based multi-agent coordination.
 
 ### 1. Create the Telegram bots you plan to use
 
-For each participating agent/profile, create a Telegram bot and keep the bot token available for the matching Hermes profile.
+Each participating agent/profile needs its own Telegram bot. Keep the bot token available for the matching Hermes profile.
 
-### 2. Enable bot-to-bot communication for your deployment
+### 2. Enable bot-to-bot communication where required
 
 If your Telegram / gateway / multi-agent runtime requires an explicit **bot-to-bot communication** setting, enable it for every participating bot.
 
@@ -58,7 +51,7 @@ Why this matters:
 - other agents may not be visible to it in practice
 - Hermes gateway may not receive the group `@mention` events needed to trigger the correct bot
 
-In practical terms: if privacy mode is still on, this skill can be perfectly written and still fail operationally because the message never reaches Hermes.
+In practical terms: if privacy mode is still on, the protocol may be correct but the message may never reach Hermes.
 
 ### 4. Add the bots to the target Telegram group or topic workspace
 
@@ -70,13 +63,13 @@ For each profile that should use Telegram group coordination:
 
 - set the correct Telegram bot token in that profile
 - configure the profile's Telegram settings according to your deployment
-- ensure the profile can load the shared skill library or has this skill installed directly under its accessible skill path
+- ensure the profile can load this skill from its accessible skill path
 
 ### 6. Restart the corresponding Hermes profile gateway
 
 After changing Telegram bot settings, profile config, or local skill files, restart the corresponding Hermes gateway/profile runtime before testing.
 
-This is important because a config file change alone does not guarantee the running gateway has picked up:
+A file change alone does not guarantee the running gateway has picked up:
 
 - the new bot token
 - updated Telegram settings
@@ -94,7 +87,7 @@ git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.gi
   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
 ```
 
-This works because the repository root already contains the standard Hermes skill layout:
+The repository root already contains a valid Hermes skill layout:
 
 ```text
 hermes-telegram-group-communication/
@@ -128,14 +121,14 @@ Update this file with your real:
 
 For many deployments, editing those two files is enough.
 
-## Fast start workflow
+## Standard usage flow
 
 ```bash
 # 1) Clone into the Hermes skills directory
 git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git \
   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
 
-# 2) Edit the two local deployment files
+# 2) Edit the two deployment-specific reference files
 $EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/live-bot-roster.md
 $EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/profile-capability-routing.md
 
@@ -169,7 +162,7 @@ python3 scripts/render_skill.py \
 
 Then copy the rendered files back into your installed skill directory if you want to use them there.
 
-This is an **optional advanced path**, not the required default path.
+This is an **optional advanced path**, not the default path.
 
 ## Verification checklist
 
@@ -181,8 +174,7 @@ Before relying on the skill in a real Telegram group workflow, verify:
 - the correct Telegram bot tokens are configured in the matching Hermes profiles
 - the corresponding Hermes gateways were restarted after config changes
 - the two local reference files were updated with your real roster/routing information
-- a new Hermes session can load:
-  - `skill_view(name='hermes-telegram-group-communication')`
+- a new Hermes session can load `skill_view(name='hermes-telegram-group-communication')`
 - a real test `@mention` in the group reaches the intended bot
 
 ## Repository layout
@@ -208,10 +200,9 @@ Before relying on the skill in a real Telegram group workflow, verify:
 
 ## Chinese documentation
 
-Chinese guide:
-- [README.zh-CN.md](README.zh-CN.md)
+For Chinese documentation, see [README.zh-CN.md](README.zh-CN.md).
 
-## Runtime limits and scope
+## Runtime scope and limits
 
 This skill can enforce:
 
