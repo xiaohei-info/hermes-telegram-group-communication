@@ -1,41 +1,87 @@
 # Hermes Telegram Group Communication
 
-A reusable Hermes skill for running visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
+A reusable Hermes skill for visible, low-noise communication and coordination between multiple agent bots in a shared Telegram group or topic.
 
-This repository is intentionally structured so that the **repository root is also a valid Hermes skill folder**.
-That means the fastest install path is:
+This repository is published in a **directly loadable Hermes skill layout**. The repository root is itself a valid skill directory, so the normal installation path is to clone it directly into your Hermes skills tree, update a small number of deployment-specific files, start a new Hermes session, and load the skill.
 
-- clone this repository directly into your Hermes skills directory
-- edit a small number of placeholder/reference files
-- start a new Hermes session
-- load the skill immediately
+## What this skill is for
 
-## Quickest path (recommended)
+Use this skill when:
 
-Clone directly into your Hermes skills directory:
+- multiple agent bots share one Telegram group or topic
+- you want visible, auditable coordination instead of hidden internal-only handoffs
+- you need clear wake-up rules, owner rules, handoff rules, and reporting rules
+- you want a standard way to distinguish native quote-reply, topic-post, and `reply-fallback`
+
+It is designed to reduce common multi-agent Telegram failure modes:
+
+- the wrong bot wakes up because someone casually typed a handle
+- the right bot never wakes up because nobody explicitly addressed it
+- multiple bots answer the same task and create noise
+- a conversation forks into several top-level messages and loses task lineage
+- nobody knows who owns the task or who should report upstream
+
+## Prerequisites
+
+Before using this skill, make sure your Telegram + Hermes environment is actually capable of group-based multi-agent coordination.
+
+### 1. Create the Telegram bots you plan to use
+
+For each participating agent/profile, create a Telegram bot and keep the bot token available for the matching Hermes profile.
+
+### 2. Enable bot-to-bot communication for your deployment
+
+If your Telegram / gateway / multi-agent runtime requires an explicit **bot-to-bot communication** setting, enable it for every participating bot.
+
+This skill assumes that bots can visibly coordinate with other bots in the same shared group/topic when the platform and gateway configuration allow it.
+
+### 3. Disable Telegram group privacy mode
+
+For every bot that needs to react to group messages and `@mentions`, disable **Group Privacy** / privacy mode.
+
+Why this matters:
+
+- if privacy mode stays enabled, the bot may not receive ordinary group messages
+- other agents may not be visible to it in practice
+- Hermes gateway may not receive the group `@mention` events needed to trigger the correct bot
+
+In practical terms: if privacy mode is still on, this skill can be perfectly written and still fail operationally because the message never reaches Hermes.
+
+### 4. Add the bots to the target Telegram group or topic workspace
+
+Make sure the intended bots are actually present in the shared group and, if you use Telegram topics, in the correct operational workspace context.
+
+### 5. Configure each participating Hermes profile
+
+For each profile that should use Telegram group coordination:
+
+- set the correct Telegram bot token in that profile
+- configure the profile's Telegram settings according to your deployment
+- ensure the profile can load the shared skill library or has this skill installed directly under its accessible skill path
+
+### 6. Restart the corresponding Hermes profile gateway
+
+After changing Telegram bot settings, profile config, or local skill files, restart the corresponding Hermes gateway/profile runtime before testing.
+
+This is important because a config file change alone does not guarantee the running gateway has picked up:
+
+- the new bot token
+- updated Telegram settings
+- new skill files
+- changed routing/reference files
+
+## Installation
+
+### Recommended installation path
+
+Clone this repository directly into your Hermes skills directory:
 
 ```bash
-git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git \
+  ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
 ```
 
-Then edit these files:
-
-- `references/live-bot-roster.md`
-- `references/profile-capability-routing.md`
-
-Optional structured source-of-truth file:
-
-- `templates/skill-config.example.json`
-
-After editing, start a **new Hermes session**, then load:
-
-```text
-skill_view(name='hermes-telegram-group-communication')
-```
-
-## Why this repo can be cloned directly as a skill
-
-The repository root contains the standard Hermes skill layout:
+This works because the repository root already contains the standard Hermes skill layout:
 
 ```text
 hermes-telegram-group-communication/
@@ -45,44 +91,45 @@ hermes-telegram-group-communication/
 └── scripts/
 ```
 
-So if you clone it into:
+## Minimum required local customization
 
-```text
-~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
-```
-
-your Hermes installation already has the correct shape to load it.
-
-## Minimal customization steps
-
-If you want the smallest possible setup effort, you can ignore most of the repo and only update:
+For most users, the minimum setup is to edit **two files**.
 
 ### 1. `references/live-bot-roster.md`
-Fill in your real:
-- profile/role keys
+
+Update this file with your real:
+
+- role/profile keys
 - bot usernames
 - optional bot IDs
 - topic capability flags
 
 ### 2. `references/profile-capability-routing.md`
-Adjust:
-- which role owns which kind of work
-- how escalation should happen in your deployment
-- where your local role docs live
 
-That is enough for many deployments.
+Update this file with your real:
 
-## Standard clone-to-skill workflow
+- role ownership boundaries
+- escalation paths
+- profile capability mapping
+- local role-document paths (if you use them)
+
+For many deployments, editing those two files is enough.
+
+## Fast start workflow
 
 ```bash
 # 1) Clone into the Hermes skills directory
-git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git   ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
+git clone https://github.com/xiaohei-info/hermes-telegram-group-communication.git \
+  ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication
 
-# 2) Edit the deployment-specific files
+# 2) Edit the two local deployment files
 $EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/live-bot-roster.md
 $EDITOR ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication/references/profile-capability-routing.md
 
-# 3) Start a new Hermes session, then load the skill
+# 3) Restart the relevant Hermes profile gateway(s)
+#    (use your normal Hermes gateway/profile restart flow)
+
+# 4) Start a new Hermes session, then load the skill
 ```
 
 Load command inside Hermes:
@@ -91,40 +138,39 @@ Load command inside Hermes:
 skill_view(name='hermes-telegram-group-communication')
 ```
 
-## Alternative: keep a local config and regenerate the reference files
+## Optional structured configuration workflow
 
-If you prefer maintaining role/bot info as structured JSON rather than editing markdown by hand:
+If you prefer maintaining deployment-specific role/bot information as structured JSON instead of editing markdown by hand:
 
 ```bash
 cp templates/skill-config.example.json templates/skill-config.local.json
 ```
 
-Then update `templates/skill-config.local.json`, and render the two high-locality reference files into a separate output directory:
+Then update `templates/skill-config.local.json` and render the high-locality reference files into a separate output directory:
 
 ```bash
-python3 scripts/render_skill.py   --config templates/skill-config.local.json   --output /tmp/hermes-telegram-group-communication-rendered
+python3 scripts/render_skill.py \
+  --config templates/skill-config.local.json \
+  --output /tmp/hermes-telegram-group-communication-rendered
 ```
 
 Then copy the rendered files back into your installed skill directory if you want to use them there.
 
-## What problem this skill solves
+This is an **optional advanced path**, not the required default path.
 
-When multiple agents share a Telegram group or topic, common failure modes appear quickly:
+## Verification checklist
 
-- the wrong bot wakes up because someone casually typed a handle
-- the right bot never wakes up because nobody explicitly addressed it
-- multiple bots answer the same task and create noise
-- conversations fork into several top-level messages and lose task lineage
-- nobody knows who owns the task or who should report upstream
+Before relying on the skill in a real Telegram group workflow, verify:
 
-This skill standardizes:
-
-- explicit `@mention` wake-ups
-- native quote-reply vs topic-post vs `reply-fallback`
-- visible `[ACK]` ownership claims
-- handoff structure
-- upstream reporter nomination
-- public coordination discipline with minimal noise
+- the bots were created and added to the correct Telegram group/topic
+- bot-to-bot communication is enabled where your deployment requires it
+- Telegram group privacy mode is disabled for the participating bots
+- the correct Telegram bot tokens are configured in the matching Hermes profiles
+- the corresponding Hermes gateways were restarted after config changes
+- the two local reference files were updated with your real roster/routing information
+- a new Hermes session can load:
+  - `skill_view(name='hermes-telegram-group-communication')`
+- a real test `@mention` in the group reaches the intended bot
 
 ## Repository layout
 
@@ -159,13 +205,22 @@ Before open-sourcing **your own modified deployment copy**, run the built-in aud
 ### Example: audit the working copy
 
 ```bash
-python3 scripts/audit_sensitive_strings.py   --path .   --deny your_company_name   --deny your_project_codename   --deny your_primary_bot_handle   --deny /home/your-user/.hermes
+python3 scripts/audit_sensitive_strings.py \
+  --path . \
+  --deny your_company_name \
+  --deny your_project_codename \
+  --deny your_primary_bot_handle \
+  --deny /home/your-user/.hermes
 ```
 
 ### Example: audit an installed skill folder
 
 ```bash
-python3 scripts/audit_sensitive_strings.py   --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication   --deny your_real_company_name   --deny your_real_bot_prefix   --deny /home/your-user
+python3 scripts/audit_sensitive_strings.py \
+  --path ~/.hermes/skills/autonomous-ai-agents/hermes-telegram-group-communication \
+  --deny your_real_company_name \
+  --deny your_real_bot_prefix \
+  --deny /home/your-user
 ```
 
 ## Runtime limits and scope
@@ -193,10 +248,12 @@ That is why the skill distinguishes:
 
 No.
 
-For most users, the fastest path is:
+For most users, the default path is:
+
 - clone into the Hermes skill directory
 - edit `references/live-bot-roster.md`
 - edit `references/profile-capability-routing.md`
+- restart the relevant Hermes gateway/profile
 - start a new Hermes session
 - load the skill
 
